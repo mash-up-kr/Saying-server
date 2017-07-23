@@ -1,4 +1,4 @@
-"""Saying URL Configuration
+"""model_test URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.10/topics/http/urls/
@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^test/', include('account.urls', namespace='account')),
+    url(r'^account/', include('Account.urls', namespace='account')),
 ]
 
 urlpatterns += static('upload_files', document_root=settings.MEDIA_ROOT)

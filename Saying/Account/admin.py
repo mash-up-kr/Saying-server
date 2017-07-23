@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from .models import Account
+from .models import UserCredential, UserProfile, Users
 
 
 class UserCreationForm(forms.ModelForm):
@@ -12,8 +12,8 @@ class UserCreationForm(forms.ModelForm):
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
 
     class Meta:
-        model = Account
-        fields = ('user_acc', 'username', 'user_status', 'user_age', 'user_gender')
+        model = UserCredential
+        fields = ('user_acc',)
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -35,37 +35,56 @@ class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField()
 
     class Meta:
-        model = Account
-        fields = ('user_acc', 'username', 'user_status', 'password')
+        model = UserCredential
+        fields = ('user_acc', 'password')
 
     def clean_password(self):
         return self.initial["password"]
 
 
+class UsersInline(admin.StackedInline):
+    model = Users
+    can_delete = False
+    verbose_name = 'hello'
+
+
+class ProfileInline(admin.StackedInline):
+    readonly_fields = ['profile_preview']
+    fieldsets = (
+        (None, {'fields': ('profile_preview', 'nickname', 'age', 'gender')}),
+    )
+
+    model = UserProfile
+    can_delete = False
+
+
 class UserAdmin(BaseUserAdmin):
+    inlines = (UsersInline, ProfileInline,)
     form = UserChangeForm
     add_form = UserCreationForm
 
-    readonly_fields = ['image_thumb']
-    list_display = ('user_acc', 'username', 'user_status', 'is_active', 'is_admin', 'is_superuser')
+    list_select_related = ('userprofile', )
+    list_display = ('user_acc', 'get_nickname', 'is_active', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('user_acc', 'password')}),
-        ('Personal info', {'fields': ('image_thumb', 'user_profile_img', 'username', 'user_status', 'user_age', 'user_gender')}),
         ('Permissions', {'fields': ('is_admin', 'is_superuser', 'is_active')}),
     )
-
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('user_acc', 'username', 'password1', 'password2')}
-        ),
-    )
-    search_fields = ('user_acc',)
     ordering = ('user_acc',)
     filter_horizontal = ()
 
+    def get_nickname(self, instance):
+        return instance.userprofile.nickname
+
+    get_nickname.short_description = '닉네임'
+
+    def get_inline_instances(self, request, obj=None):
+        if not obj:
+            return list()
+        return super(UserAdmin, self).get_inline_instances(request, obj)
+
+
 admin.site.site_title = 'Saying'
 admin.site.site_header = 'Saying 관리자 페이지'
-admin.site.register(Account, UserAdmin)
+admin.site.register(UserCredential, UserAdmin)
 admin.site.unregister(Group)
