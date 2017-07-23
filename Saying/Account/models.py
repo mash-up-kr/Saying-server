@@ -134,4 +134,5 @@ def create_or_update_user(sender, instance, created, **kwargs):
     if created:
         Users.objects.create(userid=instance)
         UserProfile.objects.create(userid=instance)
-    #instance.userprofile.save()
+    instance.userprofile.save()
+    instance.users.save()

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import pymysql
+from .secret import *
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -22,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'tndz9tu1#*&mj7(s2m!lt0!xe_5tpebj!eqx^6!mmds_f-coke'
+SECRET_KEY = DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -87,11 +88,11 @@ WSGI_APPLICATION = 'Saying.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'saying',
-        'USER': 'jungmin',
-        'PASSWORD': 'kjmds17',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': DATABASE_NAME,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': DATABASE_HOST,
+        'PORT': 3306,
     }
 }
 DATABASE_OPTIONS = {'charset': 'utf8'}
@@ -128,3 +129,10 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/upload_files/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = EMAIL_SES_HOST
+EMAIL_PORT = 587
+EMAIL_HOST_USER = EMAIL_SES_USER
+EMAIL_HOST_PASSWORD = EMAIL_SES_PASSWORD
+EMAIL_USE_TLS = True
