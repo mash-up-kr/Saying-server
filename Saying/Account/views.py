@@ -57,7 +57,7 @@ def register_user(request):
 @csrf_exempt
 def update_profile(request):
     if request.method == "POST":
-        upload = request.FILES['file']
+        upload = request.FILES['image']
         # user = UserProfile.objects.get(userid=request.POST['userid'])
         # user.nickname = request.POST['nickname']
         # user.save()

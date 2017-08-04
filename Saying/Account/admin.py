@@ -51,7 +51,7 @@ class UsersInline(admin.StackedInline):
 class ProfileInline(admin.StackedInline):
     readonly_fields = ['profile_preview']
     fieldsets = (
-        (None, {'fields': ('profile_preview', 'nickname', 'age', 'gender')}),
+        (None, {'fields': ('profile_preview', 'user_profile_img', 'nickname', 'age', 'gender')}),
     )
 
     model = UserProfile
