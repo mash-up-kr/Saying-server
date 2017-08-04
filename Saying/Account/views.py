@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from .models import UserProfile
 from .tokens import account_activation_token
+from .s3 import get_s3_object
 from django.core import serializers
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
@@ -58,14 +59,19 @@ def register_user(request):
 def update_profile(request):
     if request.method == "POST":
         upload = request.FILES['image']
-        # user = UserProfile.objects.get(userid=request.POST['userid'])
-        # user.nickname = request.POST['nickname']
-        # user.save()
+        user = UserProfile.objects.get(userid=request.POST['userid'])
+        user.user_profile_img = upload
+        user.save()
         # data = serializers.serialize("json", User.objects.all())
         # return HttpResponse(data, content_type='application/json')
-        print(upload)
         return HttpResponse("receive success")
     return HttpResponse("no data")
+
+
+@csrf_exempt
+def list_s3(request):
+    get_s3_object()
+    return HttpResponse("OK")
 
 
 def activate(request, userid, token):

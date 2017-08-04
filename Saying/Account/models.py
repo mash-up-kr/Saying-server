@@ -1,4 +1,6 @@
+import os
 import uuid
+import datetime
 from django.db import models
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.models import AbstractBaseUser
@@ -9,6 +11,16 @@ from django.db.models.signals import post_save
 
 from .managers import UserManager
 from .choice_type import status_types, age_types, gender_types
+now = datetime.datetime.now()
+
+
+def update_filename(instance, file):
+    path = "profile/"
+    ext = file.split('.')[-1]
+    now_date = now.strftime('%Y%m%d')
+    now_time = now.strftime('%H%M%S')
+    filename = "%s_%s_%s.%s" % (instance.userid, now_date, now_time, ext)
+    return os.path.join(path, filename)
 
 
 class UserCredential(AbstractBaseUser, PermissionsMixin):
@@ -80,7 +92,7 @@ class UserProfile(models.Model):
     )
     user_profile_img = models.ImageField(
         "프로필 사진",
-        upload_to='profile',
+        upload_to=update_filename,
         default="profile/default.png"
     )
     age = models.SmallIntegerField(

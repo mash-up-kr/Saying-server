@@ -1,8 +1,9 @@
 from django.conf.urls import url
-from .views import register_user, update_profile, activate, acc_check
+from .views import register_user, update_profile, activate, acc_check, list_s3
 
 
 urlpatterns = [
+    url(r'^test$', list_s3, name='s3'),
     url(r'^check$', acc_check, name='check'),
     url(r'^register$', register_user, name='register'),
     url(r'^activate/(?P<userid>[^/]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
