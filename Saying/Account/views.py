@@ -3,12 +3,31 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from .models import UserProfile
 from .tokens import account_activation_token
-from .s3 import get_s3_object
-from django.core import serializers
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
+from rest_framework.response import Response
+from rest_framework import viewsets, status
+from .serializers import *
 
 User = get_user_model()
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def create(self, request, pk=None):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'result': 'create success'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def retrieve(self, request, pk):
+    #     snippet = self.get_object(pk)
+    #     serializer = UserSerializer(snippet)
+    #     return Response(serializer.data)
 
 
 @csrf_exempt
@@ -43,7 +62,7 @@ def register_user(request):
 
             subject = 'Activate Your Saying Account'
             message = render_to_string('account_activation_email.html', {
-                'user': user.userprofile.nickname,
+                'user': user.profile.nickname,
                 'domain': 'saying@mashup-dev.org',
                 'uid': str(user.pk),
                 'token': account_activation_token.make_token(user),
@@ -66,12 +85,6 @@ def update_profile(request):
         # return HttpResponse(data, content_type='application/json')
         return HttpResponse("receive success")
     return HttpResponse("no data")
-
-
-@csrf_exempt
-def list_s3(request):
-    get_s3_object()
-    return HttpResponse("OK")
 
 
 def activate(request, userid, token):

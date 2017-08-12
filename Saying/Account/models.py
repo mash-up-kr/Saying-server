@@ -76,12 +76,13 @@ class UserCredential(AbstractBaseUser, PermissionsMixin):
         return self.user_acc
 
     def get_full_name(self):
-        return self.userid
+        return self.user_acc
 
 
 class UserProfile(models.Model):
     userid = models.OneToOneField(
         UserCredential,
+        related_name='profile',
         on_delete=models.CASCADE,
         primary_key=True,
     )
@@ -126,6 +127,7 @@ class UserProfile(models.Model):
 class Users(models.Model):
     userid = models.OneToOneField(
         UserCredential,
+        related_name='users',
         on_delete=models.CASCADE,
         primary_key=True,
     )
@@ -146,5 +148,5 @@ def create_or_update_user(sender, instance, created, **kwargs):
     if created:
         Users.objects.create(userid=instance)
         UserProfile.objects.create(userid=instance)
-    instance.userprofile.save()
-    instance.users.save()
+    # instance.profile.save()
+    # instance.users.save()

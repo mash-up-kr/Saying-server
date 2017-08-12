@@ -1,12 +1,20 @@
 from django.conf.urls import url
-from .views import register_user, update_profile, activate, acc_check, list_s3
+from rest_framework.urlpatterns import format_suffix_patterns
+from .views import *
 
+user_list = UserViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+user_detail = UserViewSet.as_view({
+    'get': 'retrieve',
+})
 
-urlpatterns = [
-    url(r'^test$', list_s3, name='s3'),
-    url(r'^check$', acc_check, name='check'),
+urlpatterns = format_suffix_patterns([
     url(r'^register$', register_user, name='register'),
     url(r'^activate/(?P<userid>[^/]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         activate, name='activate'),
     url(r'^profile$', update_profile, name='profile'),
-]
+    url(r'^users/$', user_list, name='user-list'),
+    url(r'^users/(?P<pk>[^/]+)/$', user_detail, name='user-detail'),
+])

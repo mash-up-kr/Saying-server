@@ -63,7 +63,7 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_select_related = ('userprofile', )
+    list_select_related = ('profile', )
     list_display = ('user_acc', 'get_nickname', 'is_active', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
@@ -74,7 +74,7 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
     def get_nickname(self, instance):
-        return instance.userprofile.nickname
+        return instance.profile.nickname
 
     get_nickname.short_description = '닉네임'
 

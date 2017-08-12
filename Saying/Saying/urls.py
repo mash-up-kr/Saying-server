@@ -17,9 +17,13 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework_swagger.views import get_swagger_view
 
+schema_view = get_swagger_view(title='Saying API')
 
 urlpatterns = [
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^docs/', schema_view),
     url(r'^admin/', admin.site.urls),
     url(r'^account/', include('Account.urls', namespace='account')),
 ]
